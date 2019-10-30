@@ -13,6 +13,7 @@ TODOS:
 8. Pagination
 9. Sort course table (hint: mapStateToProps)
 10. Revert abandoned changes (undo button even after hiting save)
+11. Replace componentDidMount in CoursesPage with Hook DONE 30/10/2019
 
 # Starter Kit for [Building Applications in React and Redux](http://www.pluralsight.com/author/cory-house) on Pluralsight
 
