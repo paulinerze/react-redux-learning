@@ -3,11 +3,11 @@ Run prod (locally): npm run build
 
 TODOS:
 
-1. Author administration (be sure that you can't delete an author who has a course)
+1. Author administration (be sure that you can't delete an author who has a course) DONE 31/10/2019
 2. Filter course list
-3. Hide empty course list
+3. Hide empty course list DONE 30/10/2019
 4. Unsaved changes message (if the user leave the page w/o saving)
-5. Enhance validation (more stric about the data)
+5. Enhance validation (more strict about the data)
 6. Handle 404 on edit course (when invalid slug, hint: mapStateToProps)
 7. Show # courses in Header
 8. Pagination

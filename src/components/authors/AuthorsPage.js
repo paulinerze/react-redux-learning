@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
-import * as courseActions from "../../redux/actions/courseActions";
 import * as authorActions from "../../redux/actions/authorActions";
+import * as courseActions from "../../redux/actions/courseActions";
 import PropTypes from "prop-types";
 import { bindActionCreators } from "redux";
-import CourseList from "./CourseList";
 import { Redirect } from "react-router-dom";
 import Spinner from "../common/Spinner";
 import { toast } from "react-toastify";
+import AuthorsList from "./AuthorList";
 
-export function CoursesPage({ authors, courses, actions, loading }) {
-  const [redirectToAddCoursePage, setRedirectToAddCoursePage] = useState(false);
+export function AuthorsPage({ courses, authors, actions, loading }) {
+  const [redirectToAddAuthorPage, setRedirectToAddAuthorPage] = useState(false);
 
   useEffect(() => {
     if (courses.length === 0) {
@@ -26,32 +26,40 @@ export function CoursesPage({ authors, courses, actions, loading }) {
     }
   }, []);
 
-  function handleDeleteCourse(course) {
-    toast.success("Course deleted");
-    try {
-      actions.deleteCourse(course);
-    } catch (error) {
-      toast.error("Delete failed. " + error.message, { autoClose: false });
-    }
+  function handleDeleteAuthor(author) {
+    const handleCheck =
+      courses.filter(function(e) {
+        return e.authorId === author.id;
+      }).length > 0;
+    console.log(handleCheck);
+    if (!handleCheck) {
+      toast.success("Author deleted");
+      try {
+        actions.deleteAuthor(author);
+      } catch (error) {
+        toast.error("Delete failed. " + error.message, { autoClose: false });
+      }
+    } else
+      toast.error("Author can't be deleted because he still has course(s).");
   }
 
   return (
     <>
-      {redirectToAddCoursePage && <Redirect to="/course" />}
-      <h2>Courses</h2>
+      {redirectToAddAuthorPage && <Redirect to="/author" />}
+      <h2>Authors</h2>
       {loading ? (
         <Spinner />
       ) : (
         <>
           <button
             style={{ marginBottom: 20 }}
-            className="btn btn-primary add-course"
-            onClick={() => setRedirectToAddCoursePage(true)}
+            className="btn btn-primary add-author"
+            onClick={() => setRedirectToAddAuthorPage(true)}
           >
-            Add Course
+            Add Author
           </button>
-          {courses.length > 0 ? (
-            <CourseList onDeleteClick={handleDeleteCourse} courses={courses} />
+          {authors.length > 0 ? (
+            <AuthorsList onDeleteClick={handleDeleteAuthor} authors={authors} />
           ) : (
             <></>
           )}
@@ -61,24 +69,16 @@ export function CoursesPage({ authors, courses, actions, loading }) {
   );
 }
 
-CoursesPage.propTypes = {
-  authors: PropTypes.array.isRequired,
+AuthorsPage.propTypes = {
   courses: PropTypes.array.isRequired,
+  authors: PropTypes.array.isRequired,
   actions: PropTypes.object.isRequired,
   loading: PropTypes.bool.isRequired
 };
 
 function mapStateToProps(state) {
   return {
-    courses:
-      state.authors.length === 0
-        ? []
-        : state.courses.map(course => {
-            return {
-              ...course,
-              authorName: state.authors.find(a => a.id === course.authorId).name
-            };
-          }),
+    courses: state.courses,
     authors: state.authors,
     loading: state.apiCallsInProgress > 0
   };
@@ -89,7 +89,7 @@ function mapDispatchToProps(dispatch) {
     actions: {
       loadCourses: bindActionCreators(courseActions.loadCourses, dispatch),
       loadAuthors: bindActionCreators(authorActions.loadAuthors, dispatch),
-      deleteCourse: bindActionCreators(courseActions.deleteCourse, dispatch)
+      deleteAuthor: bindActionCreators(authorActions.deleteAuthor, dispatch)
     }
   };
 }
@@ -97,4 +97,4 @@ function mapDispatchToProps(dispatch) {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(CoursesPage);
+)(AuthorsPage);
